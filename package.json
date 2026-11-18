@@ -1,0 +1,27 @@
+{
+  "name": "promo-radar",
+  "version": "1.0.0",
+  "description": "Watches public Facebook/Instagram pages of local supermarkets and forwards new promo flyers to a WhatsApp group.",
+  "type": "module",
+  "main": "src/cli.mjs",
+  "bin": { "promo-radar": "src/cli.mjs" },
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/cli.mjs run",
+    "dry-run": "node src/cli.mjs run --dry-run",
+    "collect": "node src/cli.mjs collect",
+    "pair": "node src/cli.mjs pair",
+    "find-group": "node src/cli.mjs find-group",
+    "send-latest": "node src/cli.mjs send-latest",
+    "test": "node --test"
+  },
+  "keywords": ["whatsapp", "scraping", "playwright", "baileys", "automation", "supermarket", "promotions"],
+  "license": "MIT",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc14",
+    "pino": "^10.4.0",
+    "playwright": "^1.65.1",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

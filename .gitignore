@@ -1,0 +1,9 @@
+node_modules/
+# Runtime data: WhatsApp session (credentials!), state, QR codes, logs
+data/
+# Personal configuration (destination number/group id and your sources)
+config.json
+.env
+*.log
+# Local experiments
+spike/

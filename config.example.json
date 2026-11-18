@@ -1,0 +1,14 @@
+{
+  "destination": "5511999999999",
+  "timezone": "America/Sao_Paulo",
+  "browser": { "channel": "chrome", "locale": "pt-BR" },
+  "postsPerSource": { "facebook": 6, "instagram": 4 },
+  "caption": {
+    "first": "🛒 {source} · {channel}\n{date}\n{url}",
+    "continuation": "🛒 {source} (continuação)"
+  },
+  "sources": [
+    { "id": "mercado-exemplo-fb", "name": "Mercado Exemplo", "type": "facebook", "url": "https://www.facebook.com/mercadoexemplo" },
+    { "id": "mercado-exemplo-ig", "name": "Mercado Exemplo", "type": "instagram", "url": "https://www.instagram.com/mercadoexemplo/" }
+  ]
+}
