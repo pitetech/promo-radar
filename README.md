@@ -160,6 +160,8 @@ O histórico das execuções agendadas fica em `data/run.log`.
 | `npm run pair` | Vincula o número do WhatsApp (QR ou `PAIR_PHONE`). |
 | `npm run find-group -- "nome" [--save]` | Lista grupos pelo nome; `--save` grava o id. |
 | `npm run send-latest` | Envia o post mais recente de cada fonte. |
+| `node src/cli.mjs send-files manifesto.json` | Envia imagens locais listadas em um JSON `[{"file":"a.jpg","caption":"…"}]` (útil para stories coletados à mão). |
+| `node src/cli.mjs ig-login` | Abre um Chrome para você logar no Instagram (experimental: o Instagram pode recusar o login em navegador automatizado). |
 | `node src/cli.mjs send-post id:codigo …` | Envia posts específicos do Instagram (ex.: `mercado-ig:Df234ARl8m_`). |
 | `npm test` | Roda os testes unitários. |
 

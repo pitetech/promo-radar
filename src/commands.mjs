@@ -1,10 +1,12 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import { loadConfig, loadState, saveState, requireDestination } from './config.mjs';
 import { collect, launchBrowser } from './collect.mjs';
 import { planRun, latestPerSource, formatCaption } from './pipeline.mjs';
-import { connect } from './whatsapp.mjs';
+import { connect, sendImage } from './whatsapp.mjs';
 import { deliver } from './deliver.mjs';
 import { readInstagramPost } from './sources/instagram.mjs';
+import { igLogin, igProfileDir } from './ig-login.mjs';
 import { log, sleep } from './log.mjs';
 
 const SETTLE_MS = 5000; // let WhatsApp flush pending writes before closing
@@ -27,6 +29,14 @@ function printItems(items, cfg) {
 }
 
 export const commands = {
+  /** One-time: opens a visible Chrome so you can log in to Instagram (needed for stories). */
+  async 'ig-login'() {
+    const cfg = loadConfig();
+    const ok = await igLogin(cfg);
+    log(ok ? `Instagram session saved in ${igProfileDir(cfg)}` : 'No session detected (timed out).');
+    if (!ok) process.exitCode = 1;
+  },
+
   /** Default: send only what is new since the last run. */
   async run({ dryRun }) {
     const cfg = loadConfig();
@@ -114,6 +124,25 @@ export const commands = {
         saveState(cfg, state);
       }),
     );
+  },
+
+  /**
+   * Manual: sends local images listed in a JSON manifest: [{ "file": "a.jpg", "caption": "..." }].
+   * File paths are relative to the manifest. Handy for stories you collected by hand.
+   */
+  async 'send-files'({ args, dryRun }) {
+    if (!args[0]) throw new Error('Usage: send-files <manifest.json>');
+    const cfg = loadConfig();
+    const base = path.dirname(path.resolve(args[0]));
+    const entries = JSON.parse(fs.readFileSync(args[0], 'utf8'));
+    for (const e of entries) if (!fs.existsSync(path.join(base, e.file))) throw new Error(`File not found: ${e.file}`);
+    if (dryRun) return log('DRY RUN:', entries.length, 'files would be sent.');
+    await withSocket(cfg, async (sock) => {
+      for (const e of entries) {
+        await sendImage(sock, requireDestination(cfg), fs.readFileSync(path.join(base, e.file)), e.caption || '');
+        log('sent', e.file);
+      }
+    });
   },
 
   /** Manual: send specific Instagram posts, e.g. `send-post my-source:Df234ARl8m_`. */

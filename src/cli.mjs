@@ -11,7 +11,9 @@ Commands:
   collect                  Read-only: print what every source returns
   pair                     Link the WhatsApp number (QR code, or PAIR_PHONE for a pairing code)
   find-group <name> [--save]  List WhatsApp groups matching <name>; --save writes the id to config.json
-  send-latest              Send the newest post of every source
+  send-latest [id ...]     Send the newest post of every source (or only the given source ids)
+  send-files <manifest>    Send local images listed in a JSON manifest [{file, caption}]
+  ig-login                Open Chrome once so you can log in to Instagram (stories)
   send-post <id:code> ...  Send specific Instagram posts
 
 Options:
