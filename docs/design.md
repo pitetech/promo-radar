@@ -48,6 +48,9 @@ Conferir manualmente, todos os dias, o Facebook e o Instagram dos mercados da ci
 8. **Logar conta pessoal em navegador automatizado não é viável** — o Instagram não deixou o login concluir, e há risco para a conta. Perfis com restrição de idade ficam fora do escopo.
 9. **Falha isolada por fonte:** um perfil que falha não derruba as demais.
 
+10. **Agregador de folhetos como fonte.** O Tiendeo bloqueia clientes HTTP simples (CloudFront 403), então a página da rede é aberta no navegador; já a API pública de imagens das páginas do folheto aceita `fetch` comum e devolve todas as páginas em uma única chamada (JPEG de até 1200 px). O `publication_url` de cada folheto, no `__NEXT_DATA__` da página, traz o id da publicação.
+11. **Cobertura local varia.** Das redes buscadas, só Assaí, Atacadão, Savegnago e Tonin têm folheto no Tiendeo para Araraquara; o resto continua só pelas redes sociais.
+
 ## Próximos passos possíveis
 
 - Filtros por palavra-chave ("picanha", "oferta") na legenda.

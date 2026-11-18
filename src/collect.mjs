@@ -1,11 +1,13 @@
 import { chromium } from 'playwright';
 import { readFacebook } from './sources/facebook.mjs';
 import { readInstagram } from './sources/instagram.mjs';
+import { readTiendeo } from './sources/tiendeo.mjs';
 import { log } from './log.mjs';
 
 const READERS = {
   facebook: (ctx, source, cfg) => readFacebook(ctx, source, cfg.postsPerSource.facebook),
   instagram: (ctx, source, cfg) => readInstagram(ctx, source, cfg.postsPerSource.instagram),
+  tiendeo: (ctx, source, cfg) => readTiendeo(ctx, source, cfg.tiendeo),
 };
 
 export function launchBrowser(cfg) {

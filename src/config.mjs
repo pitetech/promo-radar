@@ -12,6 +12,8 @@ export const DEFAULTS = {
   browser: { channel: 'chrome', locale: 'pt-BR' },
   // How many of the most recent posts to read per source type, on every run.
   postsPerSource: { facebook: 6, instagram: 4 },
+  // Tiendeo flyers: newest flyers read per retailer, and how many pages of each are sent.
+  tiendeo: { maxFlyers: 2, pagesPerFlyer: 3 },
   // Placeholders: {source} {channel} {date} {url}
   caption: {
     first: '🛒 {source} · {channel}\n{date}\n{url}',
@@ -21,7 +23,7 @@ export const DEFAULTS = {
   sources: [],
 };
 
-const SOURCE_TYPES = ['facebook', 'instagram'];
+const SOURCE_TYPES = ['facebook', 'instagram', 'tiendeo'];
 
 export function loadConfig(file = process.env.PROMO_CONFIG || 'config.json') {
   if (!fs.existsSync(file)) {
@@ -33,6 +35,7 @@ export function loadConfig(file = process.env.PROMO_CONFIG || 'config.json') {
     ...raw,
     browser: { ...DEFAULTS.browser, ...raw.browser },
     postsPerSource: { ...DEFAULTS.postsPerSource, ...raw.postsPerSource },
+    tiendeo: { ...DEFAULTS.tiendeo, ...raw.tiendeo },
     caption: { ...DEFAULTS.caption, ...raw.caption },
   };
   cfg.configFile = file;

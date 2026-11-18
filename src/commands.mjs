@@ -96,11 +96,16 @@ export const commands = {
     }
   },
 
-  /** Manual: sends the newest post of every source (useful to validate the setup). */
-  async 'send-latest'({ dryRun }) {
+  /**
+   * Manual: sends the newest post of every source (useful to validate the setup).
+   * Optional source ids restrict it, e.g. `send-latest atacadao-td tonin-td`.
+   */
+  async 'send-latest'({ args, dryRun }) {
     const cfg = loadConfig();
     const state = loadState(cfg);
-    const picked = latestPerSource(await collect(cfg), cfg.sources);
+    const sources = args.length ? cfg.sources.filter((s) => args.includes(s.id)) : cfg.sources;
+    if (!sources.length) throw new Error(`No source matches: ${args.join(', ')}`);
+    const picked = latestPerSource(await collect(cfg, sources), sources);
     printItems(picked, cfg);
     if (dryRun) return log('DRY RUN: nothing sent.');
     await withSocket(cfg, (sock) =>

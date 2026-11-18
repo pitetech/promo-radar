@@ -66,19 +66,25 @@ Todos os parâmetros ficam abertos para você ajustar. O arquivo `config.json` *
   },
   "sources": [
     { "id": "mercado-fb", "name": "Mercado Exemplo", "type": "facebook",  "url": "https://www.facebook.com/mercadoexemplo" },
-    { "id": "mercado-ig", "name": "Mercado Exemplo", "type": "instagram", "url": "https://www.instagram.com/mercadoexemplo/" }
-  ]
+    { "id": "mercado-ig", "name": "Mercado Exemplo", "type": "instagram", "url": "https://www.instagram.com/mercadoexemplo/" },
+    { "id": "mercado-td", "name": "Mercado Exemplo", "type": "tiendeo",   "url": "https://www.tiendeo.com.br/suacidade/mercado-exemplo" }
+  ],
+  "tiendeo": { "maxFlyers": 2,            // folhetos mais novos lidos por rede
+               "pagesPerFlyer": 3 }       // páginas de cada folheto enviadas ao grupo
 }
 ```
+
+**Fonte `tiendeo`:** o [Tiendeo](https://www.tiendeo.com.br) reúne os folhetos oficiais de várias redes por cidade. Abra `https://www.tiendeo.com.br/<cidade>/<rede>` (ex.: `/araraquara/atacadao`) e use esse endereço como `url`. O robô envia as primeiras páginas dos folhetos **vigentes** (páginas inteiras, em alta resolução) com o link do folheto completo. Se a rede não tem folheto na sua cidade, a página não existe e a fonte falha sem afetar as demais.
 
 | Campo | Obrigatório | Descrição |
 |---|---|---|
 | `destination` | sim (para enviar) | Número (`5511999999999`) ou id de grupo. Para achar o id do grupo, veja o passo 3 abaixo. |
 | `sources[].id` | sim | Identificador único (letras, números, `-`, `_`). Vira o prefixo dos ids no estado. |
 | `sources[].name` | não | Nome que aparece na legenda. |
-| `sources[].type` | sim | `facebook` ou `instagram`. |
+| `sources[].type` | sim | `facebook`, `instagram` ou `tiendeo`. |
 | `sources[].url` | sim | Endereço `https://` da página/perfil **público**. |
 | `postsPerSource` | não | Mais posts = leitura mais lenta. |
+| `tiendeo` | não | `maxFlyers` e `pagesPerFlyer` das fontes `tiendeo`. |
 | `caption` | não | Modelos de legenda com os marcadores `{source}`, `{channel}`, `{date}`, `{url}`. |
 | `dataDir` | não | Pasta de dados (padrão `data/`). |
 
@@ -169,6 +175,7 @@ src/
   sources/
     facebook.mjs     leitor de páginas públicas do Facebook
     instagram.mjs    leitor de perfis públicos do Instagram
+    tiendeo.mjs      leitor de folhetos do Tiendeo (páginas em alta resolução)
   deliver.mjs        baixa a imagem e envia (um link por post)
   whatsapp.mjs       sessão e envio via Baileys
 scripts/             agendamento (Windows / cron)
@@ -190,7 +197,7 @@ test/                testes unitários (node:test)
 - **WhatsApp não oficial.** O Baileys usa o protocolo do WhatsApp Web. Existe risco de o número ser **bloqueado**; use um **chip secundário** e poucos envios. Não use para spam.
 - **Perfis que exigem login** (restrição de idade, bebidas alcoólicas etc.) **não são lidos**. Tentar logar a conta pessoal em navegador automatizado não funcionou e pode levar a bloqueio.
 - **Layouts mudam.** Se o Facebook/Instagram mudarem o HTML, a leitura pode falhar; o erro aparece em `data/run.log`.
-- **Reels e stories** não são enviados; em posts do Instagram com várias imagens, só a primeira.
+- **Stories** exigem login no Instagram e não são lidos; **reels** também não são enviados; em posts do Instagram com várias imagens, só a primeira.
 - **Termos de uso.** Raspar páginas pode contrariar os termos das plataformas. Este projeto é **educacional**, lê apenas conteúdo público, em baixa frequência e para uso pessoal. Use por sua conta e risco, respeite os termos e a privacidade dos outros.
 - **Segredos:** `data/` (sessão do WhatsApp) e `config.json` estão no `.gitignore`. **Nunca** os publique.
 

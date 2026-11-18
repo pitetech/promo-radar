@@ -30,10 +30,12 @@ export function latestPerSource(items, sources) {
   for (const s of sources) {
     const own = items.filter((i) => i.sourceId === s.id);
     if (!own.length) continue;
-    if (s.type === 'facebook') {
-      // Facebook photo ids grow over time: the biggest one is the newest.
+    if (s.type === 'facebook' || s.type === 'tiendeo') {
+      // Facebook photo ids and Tiendeo flyer ids grow over time: the biggest one is the newest.
       const newest = [...own].sort((a, b) => (BigInt(b.code) > BigInt(a.code) ? 1 : -1))[0];
-      picked.push(...own.filter((i) => i.url === newest.url));
+      const sameUrl = own.filter((i) => i.url === newest.url);
+      // Tiendeo pages are listed last → first; send them page 1 first.
+      picked.push(...(s.type === 'tiendeo' ? sameUrl.reverse() : sameUrl));
     } else {
       const newest = [...own].sort((a, b) => String(b.date).localeCompare(String(a.date)))[0];
       picked.push(newest);

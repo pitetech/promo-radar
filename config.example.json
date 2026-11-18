@@ -9,6 +9,8 @@
   },
   "sources": [
     { "id": "mercado-exemplo-fb", "name": "Mercado Exemplo", "type": "facebook", "url": "https://www.facebook.com/mercadoexemplo" },
-    { "id": "mercado-exemplo-ig", "name": "Mercado Exemplo", "type": "instagram", "url": "https://www.instagram.com/mercadoexemplo/" }
-  ]
+    { "id": "mercado-exemplo-ig", "name": "Mercado Exemplo", "type": "instagram", "url": "https://www.instagram.com/mercadoexemplo/" },
+    { "id": "mercado-exemplo-td", "name": "Mercado Exemplo", "type": "tiendeo", "url": "https://www.tiendeo.com.br/suacidade/mercado-exemplo" }
+  ],
+  "tiendeo": { "maxFlyers": 2, "pagesPerFlyer": 3 }
 }
