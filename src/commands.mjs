@@ -5,6 +5,7 @@ import { collect, launchBrowser } from './collect.mjs';
 import { planRun, latestPerSource, formatCaption } from './pipeline.mjs';
 import { connect, sendImage } from './whatsapp.mjs';
 import { deliver } from './deliver.mjs';
+import { filterPromos } from './ocr.mjs';
 import { readInstagramPost } from './sources/instagram.mjs';
 import { igLogin, igProfileDir } from './ig-login.mjs';
 import { log, sleep } from './log.mjs';
@@ -46,13 +47,18 @@ export const commands = {
     const plan = planRun(items, state, cfg.sources);
     for (const id of plan.newlyInitialized) log('baseline registered for source', id, '(nothing sent)');
 
+    // Only promotions go to the group: notices (hours, hiring, campaigns) are dropped.
+    const { keep, rejected } = await filterPromos(plan.fresh);
+    plan.fresh = keep;
+    for (const r of rejected) log('skipped', r.id, r.reason);
+
     if (dryRun) {
       log('DRY RUN: nothing sent, state untouched.');
       log('would send', plan.fresh.length, 'items');
       printItems(plan.fresh, cfg);
       return;
     }
-    state.seen.push(...plan.silentlySeen);
+    state.seen.push(...plan.silentlySeen, ...rejected.map((r) => r.id));
     state.initializedSources.push(...plan.newlyInitialized);
     saveState(cfg, state);
 

@@ -22,8 +22,9 @@ export async function readInstagramPost(context, url, source) {
     const image = await fullImage(page);
     if (!image) return null;
     const date = await page.$eval('time', (t) => t.getAttribute('datetime')).catch(() => '');
+    const text = await page.$eval('meta[property="og:description"]', (m) => m.content).catch(() => '');
     const code = url.match(/\/p\/([^/]+)/)[1];
-    return { id: `${source.id}:${code}`, sourceId: source.id, code, source: source.name, channel: 'Instagram', url, image, date };
+    return { id: `${source.id}:${code}`, sourceId: source.id, code, source: source.name, channel: 'Instagram', url, image, date, text };
   } finally {
     await page.close();
   }

@@ -236,3 +236,10 @@ npm start                            # send only what is new (--dry-run to previ
 ## 📄 Licença
 
 [MIT](LICENSE)
+
+## Promo-only filter
+
+Before sending, each new Instagram/Facebook post is read with local OCR (tesseract.js) plus its caption.
+Only posts with promo signals (prices, "oferta", discount %, "válido até"...) are sent; notices
+(opening hours, hiring, campaigns) and teasers without prices are skipped and logged as `skipped`.
+Tiendeo flyers always pass. Logic lives in `src/promo-filter.mjs` (pure, tested) and `src/ocr.mjs`.
