@@ -243,3 +243,10 @@ Before sending, each new Instagram/Facebook post is read with local OCR (tessera
 Only posts with promo signals (prices, "oferta", discount %, "válido até"...) are sent; notices
 (opening hours, hiring, campaigns) and teasers without prices are skipped and logged as `skipped`.
 Tiendeo flyers always pass. Logic lives in `src/promo-filter.mjs` (pure, tested) and `src/ocr.mjs`.
+
+### City filter
+
+Only promotions for `city` (default `Araraquara`, set in `config.json`) are sent. Sources with
+`"scope": "chain"` (national chains such as Assaí or Savegnago) must name the city in the post;
+local sources pass unless the text names another city without the target one. Tiendeo flyers are
+already city-specific.

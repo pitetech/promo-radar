@@ -48,7 +48,7 @@ export const commands = {
     for (const id of plan.newlyInitialized) log('baseline registered for source', id, '(nothing sent)');
 
     // Only promotions go to the group: notices (hours, hiring, campaigns) are dropped.
-    const { keep, rejected } = await filterPromos(plan.fresh);
+    const { keep, rejected } = await filterPromos(plan.fresh, cfg);
     plan.fresh = keep;
     for (const r of rejected) log('skipped', r.id, r.reason);
 

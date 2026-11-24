@@ -7,6 +7,8 @@ export const DEFAULTS = {
   // or a group id ("1203...@g.us", see `npm run find-group`).
   destination: null,
   timezone: 'America/Sao_Paulo',
+  // Only promotions for this city are sent. Sources with scope "chain" must name the city in the post.
+  city: 'Araraquara',
   // channel "chrome" uses the Google Chrome installed on the machine.
   // Use null to use the Chromium downloaded by `npx playwright install chromium`.
   browser: { channel: 'chrome', locale: 'pt-BR' },
@@ -54,6 +56,7 @@ export function validate(cfg) {
     ids.add(s.id);
     if (!SOURCE_TYPES.includes(s.type)) throw new Error(`Source "${s.id}": type must be one of ${SOURCE_TYPES.join(', ')}.`);
     if (!/^https:\/\//.test(s.url || '')) throw new Error(`Source "${s.id}": url must start with https://`);
+    if (s.scope && !['local', 'chain'].includes(s.scope)) throw new Error(`Source "${s.id}": scope must be local or chain.`);
     if (!s.name) s.name = s.id;
   }
 }

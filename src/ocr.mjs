@@ -6,7 +6,8 @@ import { rejection } from './promo-filter.mjs';
  * the post is kept if any of its photos reads as a promotion.
  * If OCR itself fails, the item is kept (better a notice than a lost promo).
  */
-export async function filterPromos(items) {
+export async function filterPromos(items, cfg = {}) {
+  const scopes = new Map((cfg.sources || []).map((s) => [s.id, s.scope || 'local']));
   const needsOcr = items.filter((i) => i.channel !== 'Tiendeo');
   if (!needsOcr.length) return { keep: items, rejected: [] };
   const worker = await createWorker('por');
@@ -19,7 +20,7 @@ export async function filterPromos(items) {
         const res = await fetch(item.image);
         if (!res.ok) throw new Error(`download ${res.status}`);
         const { data } = await worker.recognize(Buffer.from(await res.arrayBuffer()));
-        reason = rejection(item, data.text);
+        reason = rejection(item, data.text, { city: cfg.city, scope: scopes.get(item.sourceId) });
       } catch (e) {
         reason = null;
       }

@@ -35,9 +35,28 @@ export function classify(...texts) {
   return { promo, hits, notice, score: hits.length };
 }
 
-/** Returns the reason string when the post is NOT a promo, otherwise null. */
-export function rejection(item, ocrText) {
-  if (item.channel === 'Tiendeo') return null; // flyers are promos by definition
-  const r = classify(item.text, ocrText);
-  return r.promo ? null : `not a promo (signals: ${r.hits.join(',') || 'none'}${r.notice ? '; notice' : ''})`;
+// Other cities that appear in chain/regional posts (store lists, "retire em ...").
+const OTHER_CITIES = ['ribeirao preto','sao carlos','matao','americo brasiliense','rincao','descalvado','rio claro','campinas','sao paulo','jaboticabal','bauru','piracicaba','limeira','franca','sertaozinho','jau','ibate','santa lucia','gavea','motuca','boa esperanca do sul','dourado','tabatinga','nova europa','taquaritinga','itapolis'];
+
+/**
+ * City check. Local sources (default) pass unless the text names another city without the target one.
+ * Chain sources (scope "chain": Assaí, Savegnago...) must mention the target city explicitly.
+ */
+export function cityRejection(text, scope, city) {
+  const t = norm(text);
+  const target = norm(city);
+  if (t.includes(target)) return null;
+  const other = OTHER_CITIES.find((c) => t.includes(c));
+  if (other) return `other city (${other})`;
+  return scope === 'chain' ? `chain post without ${city}` : null;
+}
+
+/** Returns the reason string when the post must NOT be sent, otherwise null. */
+export function rejection(item, ocrText, { city = 'Araraquara', scope = 'local' } = {}) {
+  if (item.channel === 'Tiendeo') return null; // city-specific flyers, promos by definition
+  const text = [item.text, ocrText].filter(Boolean).join(' \n ');
+  const r = classify(text);
+  if (!r.promo) return `not a promo (signals: ${r.hits.join(',') || 'none'}${r.notice ? '; notice' : ''})`;
+  const c = cityRejection(text, scope, city);
+  return c ? `not for ${city}: ${c}` : null;
 }

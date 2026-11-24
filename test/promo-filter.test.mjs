@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { classify } from '../src/promo-filter.mjs';
+import { classify, rejection } from '../src/promo-filter.mjs';
 
 test('flyer with prices and validity is a promo', () => {
   assert.ok(classify('Ofertas válidas ATÉ O DIA 21/11 Paleta Suína kg R$ 22,90 Pernil kg 15,90').promo);
@@ -19,4 +19,18 @@ test('notice mentioning a discount still needs strong price proof', () => {
 });
 test('caption text helps when the image is hard to read', () => {
   assert.ok(classify('xx', 'Super oferta! Frango a R$ 9,99 o kg, válido até domingo').promo);
+});
+
+const flyer = 'Ofertas válidas ATÉ O DIA 21/11 Paleta Suína kg R$ 22,90 Pernil kg 15,90';
+test('local source passes when no other city is named', () => {
+  assert.equal(rejection({ channel: 'Instagram' }, flyer), null);
+});
+test('post naming another city without Araraquara is rejected', () => {
+  assert.match(rejection({ channel: 'Instagram' }, flyer + ' Loja Ribeirão Preto'), /other city/);
+});
+test('post naming Araraquara passes even with other cities listed', () => {
+  assert.equal(rejection({ channel: 'Instagram' }, flyer + ' Araraquara e São Carlos', { scope: 'chain' }), null);
+});
+test('chain source must mention Araraquara', () => {
+  assert.match(rejection({ channel: 'Instagram' }, flyer, { scope: 'chain' }), /chain post/);
 });
